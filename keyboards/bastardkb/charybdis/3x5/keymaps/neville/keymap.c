@@ -31,12 +31,6 @@ enum charybdis_keymap_layers {
     LAYER_DUAL,
 };
 
-/**
-// Automatically enable sniping-mode on the pointer layer.
-#define CHARYBDIS_AUTO_SNIPING_ON_LAYER LAYER_POINTER
-...
-*/
-
 #define LOWER MO(LAYER_LOWER)
 #define RAISE MO(LAYER_RAISE)
 #define PT_SPC LT(LAYER_DUAL, KC_SPC)
@@ -50,7 +44,6 @@ enum charybdis_keymap_layers {
 #endif // !POINTING_DEVICE_ENABLE
 
 // clang-format off
-/** \brief QWERTY layout (3 rows, 10 columns). */
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [LAYER_BASE] = LAYOUT(
     KC_Q,      KC_W,       KC_E,        KC_R,              KC_T,              KC_Y,      KC_U,        KC_I,        KC_O,              KC_P, \
@@ -84,19 +77,16 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 #ifdef POINTING_DEVICE_ENABLE
 
-// Optional: tune device scales after boot
 void keyboard_post_init_user(void) {
     pointing_device_set_cpi(PMW3360_CPI_DEFAULT);  // trackball sensitivity
-    cirque_pinnacle_set_scale(8);                  // trackpad scale (6..16 typical)
+    // Cirque scale setter not available in your QMK build
 }
 
 // Merge right (trackball) + left (trackpad)
 report_mouse_t pointing_device_task_combined_user(report_mouse_t right, report_mouse_t left) {
-    // Deadzone on trackball
     if (right.x > -2 && right.x < 2) right.x = 0;
     if (right.y > -2 && right.y < 2) right.y = 0;
 
-    // Weighting: trackpad contributes half
     right.x += left.x / 2;
     right.y += left.y / 2;
 
@@ -109,8 +99,6 @@ report_mouse_t pointing_device_task_combined_user(report_mouse_t right, report_m
 #endif // POINTING_DEVICE_ENABLE
 
 #ifdef RGB_MATRIX_ENABLE
-// Forward-declare this helper function since it is defined in
-// rgb_matrix.c.
 void rgb_matrix_update_pwm_buffers(void);
 #endif
 
